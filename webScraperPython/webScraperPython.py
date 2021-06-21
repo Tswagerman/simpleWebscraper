@@ -2,10 +2,10 @@ from bs4 import BeautifulSoup, SoupStrainer
 import requests
 import csv
 import re
-import numpy as np #not being used 
 import datetime 
 import getpass #secrets (hint: ******)!
 import smtplib, ssl #sendNotification
+import os
 
 from application import App 
 from re import search
@@ -13,7 +13,7 @@ from re import search
 class WebScraper:
 	def __init__(self):
 		self.current_Price = 0
-		self.desired_Price = 140
+		self.desired_Price = 0
 		self.app = App()
 		WebScraper.main(self) 
 
@@ -21,9 +21,21 @@ class WebScraper:
 		self.app.buildGUI()
 		#url = "https://www.pricerunner.dk/pl/126-5049980/Analoge-kameraer/Fujifilm-Instax-Mini-Film-20-pack-Sammenlign-Priser"
 		url = self.app.getURL()
+		self.app.clearText() #Clearing the red input error text
 		if search("pricerunner.dk", url): 
 			try:
+				print("try")
 				self.extractCurrentPrice(url)
+			except:
+				print("except")
+				self.app.printText("The input is not a valid URL. Provide a 'pricerunner.dk' URL with the item you want to track")
+				self.reset()
+			try:
+				self.desired_Price = int(self.app.getDesiredPrice())
+			except:
+				self.app.printText("The price input is not a valid desired price. Provide any number")
+				self.reset()
+			else:
 				self.app.destroy() #Close the window of the GUI
 				if ((self.desired_Price >= self.current_Price)):
 					self.sendNotification()
@@ -31,11 +43,9 @@ class WebScraper:
 					print("Not sending a notification, current price higher than desired price")
 					return
 				self.saveToCSV()
-			except:
-				print("The input is not a valid URL. Provide a 'pricerunner.dk' URL with the item you want to track")
-				self.reset()
+				os._exit(1) #No exception is raised this way, and the program is terminated.
 		else:
-			print("The input is not a valid URL. Provide a 'pricerunner.dk' URL")
+			self.app.printText("The input is not a valid URL. Provide a 'pricerunner.dk' URL")
 			self.reset()
 
 	def extractCurrentPrice(self, url):
@@ -66,7 +76,8 @@ class WebScraper:
 		print("Saving for history purposes")
 		mydate = datetime.datetime.now().strftime('%d %b %Y - %H:%M')	#add date, so history is build up.
 		csvdata = 'Price = ' + str(self.current_Price) + ', Date = ' + str(mydate)
-		savePath = "C:\Dev\python\webScraperPython\webScraperPython\data.csv"
+		cwd = os.getcwd() #current working directory
+		savePath = cwd + "\data.csv"
 		with open(savePath, 'a', newline='\n') as file:
 			mywriter = csv.writer(file, delimiter=',')
 			mywriter.writerow([csvdata]) #the [] are there to make sure the entire string is saved as one.
