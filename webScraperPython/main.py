@@ -5,7 +5,7 @@ from os import path
 from re import search
 
 from application import App 
-from webScraperPython import WebScraper
+from webScraper import WebScraper
 
 def control():
 	app.buildGUI()
