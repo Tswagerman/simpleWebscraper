@@ -28,7 +28,7 @@
     <OutputPath>bin\main\</OutputPath>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="webScraperPython.py" />
+    <Compile Include="webScraper.py" />
   </ItemGroup>
   <ItemGroup>
     <InterpreterReference Include="Global|PythonCore|3.6" />

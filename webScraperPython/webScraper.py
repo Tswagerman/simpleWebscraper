@@ -7,6 +7,7 @@ import smtplib, ssl #sendNotification
 import os
 
 from bs4 import BeautifulSoup, SoupStrainer
+from passwordPrompt import PasswordPrompt
 
 class WebScraper:
 	def __init__(self, desired_price, url):
@@ -32,12 +33,13 @@ class WebScraper:
 		smtp_server = "smtp.gmail.com"
 		sender_email = "devthomasswagerman@gmail.com"  # Enter your address
 		receiver_email = "devthomasswagerman@gmail.com"  # Enter receiver address
+		#Prompt password application
 		print('Sending from ', sender_email)
-		password = getpass.getpass("Type your password and press enter: ")
 		message = f"ALERT ALERT, BUY YOUR SHINY STUFF. IT IS CHEAP!! \nCurrent Price: {self.current_Price} \nDesired Price: {self.desired_Price}"
 		context = ssl.create_default_context()
 		with smtplib.SMTP_SSL(smtp_server, port, context=context) as server:
-			server.login(sender_email, password)
+			passwordPrompt = PasswordPrompt()
+			self.enterPassword(passwordPrompt, sender_email, server)
 			server.sendmail(sender_email, receiver_email, message)
 			print("Email has been sent to ", receiver_email)
 
@@ -50,3 +52,13 @@ class WebScraper:
 		with open(savePath, 'a', newline='\n') as file:
 			mywriter = csv.writer(file, delimiter=',')
 			mywriter.writerow([csvdata]) #the [] are there to make sure the entire string is saved as one.
+
+	def enterPassword(self, passwordPrompt, sender_email, server):
+		passwordPrompt.buildGUI()
+		password = passwordPrompt.getPassword()
+		try:
+			server.login(sender_email, password)
+			passwordPrompt.destroy()
+		except:
+			passwordPrompt.printText("The password is incorrect")
+			self.enterPassword(passwordPrompt, sender_email, server)

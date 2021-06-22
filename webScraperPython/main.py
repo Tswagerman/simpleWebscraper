@@ -27,12 +27,7 @@ def control():
 		else:
 			app.destroy() #Close the window of the GUI
 			saveSettings(desired_Price, url)
-			if ((int(desired_Price) >= webscraper.current_Price)):
-				webscraper.sendNotification()
-				webscraper.saveToCSV()
-			else:
-				print("Not sending a notification, current price higher than desired price")
-			os._exit(1) #No exception is raised this way, and the program is terminated.
+			finalCheck(desired_Price, webscraper)
 	else:
 		app.printText("The input is not a valid URL. Provide a 'pricerunner.dk' URL")
 		control() #Resetting the GUI because the url is not remotely close to what the webscraper will expect.
@@ -47,6 +42,14 @@ def saveSettings(desired_Price, url):
 		writer = csv.writer(file)
 		writer.writerow(scraping_info)
 
+def finalCheck(desired_Price, webscraper):
+	if ((int(desired_Price) >= webscraper.current_Price)):
+		webscraper.sendNotification()
+		webscraper.saveToCSV()
+	else:
+		print("Not sending a notification, current price higher than desired price")
+	os._exit(1) #No exception is raised this way, and the program is terminated.
+
 if __name__ == "__main__":
 	if (path.exists("settings.csv")):
 		with open("settings.csv") as csvFile:   #open the file
@@ -58,12 +61,7 @@ if __name__ == "__main__":
 		csvFile.close()
 		webscraper = WebScraper(desired_Price, url)
 		webscraper.extractCurrentPrice()
-		if ((int(desired_Price) >= webscraper.current_Price)):
-			webscraper.sendNotification()
-			webscraper.saveToCSV()
-		else:
-			print("Not sending a notification, current price higher than desired price")		
-		os._exit(1) #No exception is raised this way, and the program is terminated.
+		finalCheck(desired_Price, webscraper)
 	else: #No prior settings will be used, the GUI will be prompted
 		app = App()
 		control()
