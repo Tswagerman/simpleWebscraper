@@ -1,3 +1,5 @@
-*.sin
+__pycache__
+*.sln
 *.pyproj
+*.pyproj.user
 *.csv
