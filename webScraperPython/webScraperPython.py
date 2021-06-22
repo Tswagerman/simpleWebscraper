@@ -11,45 +11,17 @@ from application import App
 from re import search
 
 class WebScraper:
-	def __init__(self):
+	def __init__(self, desired_price, url):
 		self.current_Price = 0
-		self.desired_Price = 0
-		self.app = App()
-		WebScraper.main(self) 
+		self.desired_Price = desired_price
+		self.url = url
+		#WebScraper.main(self) 
 
-	def main(self):
-		self.app.buildGUI()
+	#def main(self):
 		#url = "https://www.pricerunner.dk/pl/126-5049980/Analoge-kameraer/Fujifilm-Instax-Mini-Film-20-pack-Sammenlign-Priser"
-		url = self.app.getURL()
-		self.app.clearText() #Clearing the red input error text
-		if search("pricerunner.dk", url): 
-			try:
-				print("try")
-				self.extractCurrentPrice(url)
-			except:
-				print("except")
-				self.app.printText("The input is not a valid URL. Provide a 'pricerunner.dk' URL with the item you want to track")
-				self.reset()
-			try:
-				self.desired_Price = int(self.app.getDesiredPrice())
-			except:
-				self.app.printText("The price input is not a valid desired price. Provide any number")
-				self.reset()
-			else:
-				self.app.destroy() #Close the window of the GUI
-				if ((self.desired_Price >= self.current_Price)):
-					self.sendNotification()
-				else:
-					print("Not sending a notification, current price higher than desired price")
-					return
-				self.saveToCSV()
-				os._exit(1) #No exception is raised this way, and the program is terminated.
-		else:
-			self.app.printText("The input is not a valid URL. Provide a 'pricerunner.dk' URL")
-			self.reset()
-
-	def extractCurrentPrice(self, url):
-		page = requests.get(url) 
+		
+	def extractCurrentPrice(self):
+		page = requests.get(self.url) 
 		data = page.text
 		soup = BeautifulSoup(data, "html.parser")
 		data = soup.findAll('span', attrs={'currency':'DKK'})
@@ -82,9 +54,38 @@ class WebScraper:
 			mywriter = csv.writer(file, delimiter=',')
 			mywriter.writerow([csvdata]) #the [] are there to make sure the entire string is saved as one.
 
-	def reset(self):
-		#self.app = App()
-		WebScraper.main(self) 
+def control():
+	app.buildGUI()
+	url = app.getURL()
+	desired_Price = app.getDesiredPrice()
+	if (desired_Price == ""):
+		app.printText("The price input is not a valid desired price. Provide any number")
+		control() #Resetting the GUI
+	app.clearText() #Clearing the red input error text
+	if search("pricerunner.dk", url): 
+		webscraper = WebScraper(desired_Price, url)
+		try:
+			print("try")
+			webscraper.extractCurrentPrice()
+		except:
+			print("except")
+			app.printText("The input is not a valid URL. Provide a 'pricerunner.dk' URL with the item you want to track")
+			control() #Resetting the GUI
+		else:
+			app.destroy() #Close the window of the GUI
+			if ((int(desired_Price) >= webscraper.current_Price)):
+				webscraper.sendNotification()
+			else:
+				print("Not sending a notification, current price higher than desired price")
+				#return
+			webscraper.saveToCSV()
+			os._exit(1) #No exception is raised this way, and the program is terminated.
+	else:
+		app.printText("The input is not a valid URL. Provide a 'pricerunner.dk' URL")
+		control() #Resetting the GUI
 
 if __name__ == "__main__":
-	WebScraper()
+	app = App()
+	control()
+
+
