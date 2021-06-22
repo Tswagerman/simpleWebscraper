@@ -1,5 +1,7 @@
 ﻿import os
 import re
+import csv
+from os import path
 from re import search
 
 from application import App 
@@ -24,17 +26,44 @@ def control():
 			control() #Resetting the GUI because the URL provided results in an exception
 		else:
 			app.destroy() #Close the window of the GUI
+			saveSettings(desired_Price, url)
 			if ((int(desired_Price) >= webscraper.current_Price)):
 				webscraper.sendNotification()
+				webscraper.saveToCSV()
 			else:
 				print("Not sending a notification, current price higher than desired price")
-				return
-			webscraper.saveToCSV()
 			os._exit(1) #No exception is raised this way, and the program is terminated.
 	else:
 		app.printText("The input is not a valid URL. Provide a 'pricerunner.dk' URL")
 		control() #Resetting the GUI because the url is not remotely close to what the webscraper will expect.
 
+def saveSettings(desired_Price, url):
+	cwd = os.getcwd() #current working directory
+	savePath = cwd + "\settings.csv"
+	scraping_info = []
+	scraping_info.append(desired_Price)
+	scraping_info.append(url)
+	with open(savePath, 'w', newline='\n') as file:
+		writer = csv.writer(file)
+		writer.writerow(scraping_info)
+
 if __name__ == "__main__":
-	app = App()
-	control()
+	if (path.exists("settings.csv")):
+		with open("settings.csv") as csvFile:   #open the file
+			CSVdata = csv.reader(csvFile, delimiter=',') 
+			#for iteration, row in CSVdata:
+			for row in CSVdata:
+				desired_Price = row[0]
+				url = row[1]
+		csvFile.close()
+		webscraper = WebScraper(desired_Price, url)
+		webscraper.extractCurrentPrice()
+		if ((int(desired_Price) >= webscraper.current_Price)):
+			webscraper.sendNotification()
+			webscraper.saveToCSV()
+		else:
+			print("Not sending a notification, current price higher than desired price")		
+		os._exit(1) #No exception is raised this way, and the program is terminated.
+	else: #No prior settings will be used, the GUI will be prompted
+		app = App()
+		control()
