@@ -8,7 +8,7 @@ This webscraper tracks items on pricerunner.dk. When the price of the item is lo
 4) Modules required: tkinter, bs4
 5) $python main.py
 
-###To do:
+### To do:
 1)Make multiple items trackable.
 2)Make multiple different settings work simultaneously.
 3)Make receiving and sending email account arbitrary to user.
