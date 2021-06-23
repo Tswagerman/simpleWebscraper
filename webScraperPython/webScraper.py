@@ -42,11 +42,10 @@ class WebScraper:
 			print("Email has been sent to ", receiver_email)
 
 	def saveToCSV(self):
-		print("Saving for history purposes")
 		mydate = datetime.datetime.now().strftime('%d %b %Y - %H:%M')	#add date, so history is build up.
 		csvdata = 'Price = ' + str(self.current_Price) + ', Date = ' + str(mydate)
 		cwd = os.getcwd() #current working directory
-		savePath = cwd + "\data.csv"
+		savePath = cwd + "\data\history.csv"
 		with open(savePath, 'a', newline='\n') as file:
 			mywriter = csv.writer(file, delimiter=',')
 			mywriter.writerow([csvdata]) #the [] are there to make sure the entire string is saved as one.
@@ -54,7 +53,6 @@ class WebScraper:
 	def enterPassword(self, passwordPrompt, sender_email, server):
 		passwordPrompt.buildGUI()
 		password = passwordPrompt.getPassword()
-
 		try:
 			server.login(sender_email, password)
 			passwordPrompt.destroy()

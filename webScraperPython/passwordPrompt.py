@@ -46,5 +46,4 @@ class PasswordPrompt:
         self.canvas1.delete("print_text")
 
     def destroy(self):
-        print("Destroying GUI")
         self.window.destroy() 

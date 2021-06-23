@@ -42,21 +42,15 @@ class App:
 		self.window.resizable("true", "true")
 
 	def __setURL(self):
-		print("Setting URL")
 		self.url = self.entryURL.get()
-		print(self.url)
 		
 	def getURL(self):
-		print("Getting URL")
 		return self.url
 
 	def __setDesiredPrice(self):
-		print("Setting desired price")
 		self.desiredPrice = self.entryDesiredPrice.get()
-		print(self.desiredPrice)
 		
 	def getDesiredPrice(self):
-		print("Getting desired price")
 		return self.desiredPrice
 	
 	def __callback(self, input):

@@ -7,7 +7,7 @@ from re import search
 from application import App 
 from webScraper import WebScraper
 
-def control():
+def control(): #This method checks whether the input that is given to the GUI is information that can be used.
 	app.buildGUI()
 	url = app.getURL()
 	desired_Price = app.getDesiredPrice()
@@ -20,10 +20,8 @@ def control():
 	if search("pricerunner.dk", url): 
 		webscraper = WebScraper(desired_Price, url)
 		try:
-			print("try")
 			webscraper.extractCurrentPrice()
 		except:
-			print("except")
 			app.printText("The input is not a valid URL. Provide a 'pricerunner.dk' URL with the item you want to track")
 			control() #Resetting the GUI because the URL provided results in an exception
 		else:
@@ -36,7 +34,7 @@ def control():
 
 def saveSettings(desired_Price, url):
 	cwd = os.getcwd() #current working directory
-	savePath = cwd + "\settings.csv"
+	savePath = cwd + "\data\settings.csv"
 	scraping_info = []
 	scraping_info.append(desired_Price)
 	scraping_info.append(url)
@@ -53,14 +51,14 @@ def finalCheck(desired_Price, webscraper):
 	if ((int(desired_Price) >= webscraper.current_Price)):
 		webscraper.sendNotification()
 		webscraper.saveToCSV()
-
 	else:
 		print("Not sending a notification, current price higher than desired price")
-
 	os._exit(1) #No exception is raised this way, and the program is terminated.
 
 if __name__ == "__main__":
-	if (path.exists("settings.csv")):
+	#if statement: No initial GUI prompt is necessary, because the user already indicated their preferences.
+	#These preferences are saved in the seetings file
+	if (path.exists("settings.csv")): 
 		with open("settings.csv") as csvFile:  
 			CSVdata = csv.reader(csvFile, delimiter=',') 
 			#for iteration, row in CSVdata:
@@ -71,7 +69,7 @@ if __name__ == "__main__":
 		webscraper = WebScraper(desired_Price, url)
 		webscraper.extractCurrentPrice()
 		finalCheck(desired_Price, webscraper)
-
-	else: #No prior settings will be used, the GUI will be prompted
+	#No prior settings will be used, the GUI will be prompted
+	else: 
 		app = App()
 		control()
