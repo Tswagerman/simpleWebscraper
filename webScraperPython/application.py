@@ -66,6 +66,11 @@ class App:
 		self.__setDesiredPrice()
 		self.window.quit()
 
+	def __confirm(self): #overloeaded method
+		self.__setURL()
+		self.__setDesiredPrice()
+		self.window.quit()
+
 	def printText(self, message):
 		self.canvas1.create_text(275,275,fill="red",font=('helvetica', 12, 'bold'), text=message, tag="print_text")
 

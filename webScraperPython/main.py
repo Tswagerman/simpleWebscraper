@@ -14,7 +14,7 @@ def control(): #This method checks whether the input that is given to the GUI is
 	app.clearText() #Clearing the red input error text
 
 	if (desired_Price == ""):
-		app.printText("The price input is not a valid desired price. Provide any number")
+		app.printText("The price input is not a valid desired price. Provide any number.")
 		control() #Resetting the GUI because nothing is entered in the desired price input box
 	
 	if search("pricerunner.dk", url): 
@@ -22,14 +22,14 @@ def control(): #This method checks whether the input that is given to the GUI is
 		try:
 			webscraper.extractCurrentPrice()
 		except:
-			app.printText("The input is not a valid URL. Provide a 'pricerunner.dk' URL with the item you want to track")
+			app.printText("Provide a 'pricerunner.dk' URL corresponding to an item.")
 			control() #Resetting the GUI because the URL provided results in an exception
 		else:
 			#saveSettings(desired_Price, url)
 			finalCheck(desired_Price, webscraper)
 			app.destroy() #Close the window of the GUI
 	else:
-		app.printText("The input is not a valid URL. Provide a 'pricerunner.dk' URL")
+		app.printText("The input is not a valid URL. Provide a 'pricerunner.dk' URL.")
 		control() #Resetting the GUI because the url is not remotely close to what the webscraper will expect.
 
 def saveSettings(desired_Price, url):
@@ -52,7 +52,7 @@ def finalCheck(desired_Price, webscraper):
 		webscraper.sendNotification()
 		webscraper.saveToCSV()
 	else:
-		print("Not sending a notification, current price higher than desired price")
+		print("Not sending a notification, current price higher than desired price.")
 	os._exit(1) #No exception is raised this way, and the program is terminated.
 
 if __name__ == "__main__":
