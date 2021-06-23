@@ -36,7 +36,7 @@ class WebScraper:
 		message = f"ALERT ALERT, BUY YOUR SHINY STUFF. IT IS CHEAP!! \nCurrent Price: {self.current_Price} \nDesired Price: {self.desired_Price}"
 		context = ssl.create_default_context()
 		with smtplib.SMTP_SSL(smtp_server, port, context=context) as server:
-			passwordPrompt = PasswordPrompt()
+			passwordPrompt = PasswordPrompt(sender_email)
 			self.enterPassword(passwordPrompt, sender_email, server)
 			server.sendmail(sender_email, receiver_email, message)
 			print("Email has been sent to ", receiver_email)
@@ -54,6 +54,7 @@ class WebScraper:
 	def enterPassword(self, passwordPrompt, sender_email, server):
 		passwordPrompt.buildGUI()
 		password = passwordPrompt.getPassword()
+
 		try:
 			server.login(sender_email, password)
 			passwordPrompt.destroy()
