@@ -32,14 +32,12 @@ class WebScraper:
 		sender_email = "devthomasswagerman@gmail.com"  # Enter your address
 		receiver_email = "devthomasswagerman@gmail.com"  # Enter receiver address
 		#Prompt password application
-		print('Sending from ', sender_email)
 		message = f"ALERT ALERT, BUY YOUR SHINY STUFF. IT IS CHEAP!! \nCurrent Price: {self.current_Price} \nDesired Price: {self.desired_Price}"
 		context = ssl.create_default_context()
 		with smtplib.SMTP_SSL(smtp_server, port, context=context) as server:
 			passwordPrompt = PasswordPrompt(sender_email)
 			self.enterPassword(passwordPrompt, sender_email, server)
 			server.sendmail(sender_email, receiver_email, message)
-			print("Email has been sent to ", receiver_email)
 
 	def saveToCSV(self):
 		mydate = datetime.datetime.now().strftime('%d %b %Y - %H:%M')	#add date, so history is build up.
