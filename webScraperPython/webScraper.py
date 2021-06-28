@@ -2,7 +2,6 @@ import requests
 import csv
 import re
 import datetime 
-import getpass #secrets (hint: ******)!
 import smtplib, ssl #sendNotification
 import os
 
@@ -10,10 +9,11 @@ from bs4 import BeautifulSoup, SoupStrainer
 from passwordPrompt import PasswordPrompt
 
 class WebScraper:
-	def __init__(self, desired_price, url):
+	def __init__(self, desired_price, url, receiver_email):
 		self.current_Price = 0
 		self.desired_Price = desired_price
 		self.url = url
+		self.receiver_email = receiver_email
 		#url = "https://www.pricerunner.dk/pl/126-5049980/Analoge-kameraer/Fujifilm-Instax-Mini-Film-20-pack-Sammenlign-Priser"
 		
 	def extractCurrentPrice(self):
@@ -29,15 +29,15 @@ class WebScraper:
 	def sendNotification(self):
 		port = 465  # For SSL
 		smtp_server = "smtp.gmail.com"
-		sender_email = "devthomasswagerman@gmail.com"  # Enter your address
-		receiver_email = "devthomasswagerman@gmail.com"  # Enter receiver address
+		sender_email = "devthomasswagerman@gmail.com"  #Change this address to your own account. Because the program requires the password
+		#receiver_email = "devthomasswagerman@gmail.com"  # Enter receiver address
 		#Prompt password application
 		message = f"ALERT ALERT, BUY YOUR SHINY STUFF. IT IS CHEAP!! \nCurrent Price: {self.current_Price} \nDesired Price: {self.desired_Price}"
 		context = ssl.create_default_context()
 		with smtplib.SMTP_SSL(smtp_server, port, context=context) as server:
 			passwordPrompt = PasswordPrompt(sender_email)
 			self.enterPassword(passwordPrompt, sender_email, server)
-			server.sendmail(sender_email, receiver_email, message)
+			server.sendmail(sender_email, self.receiver_email, message)
 
 	def saveToCSV(self):
 		mydate = datetime.datetime.now().strftime('%d %b %Y - %H:%M')	#add date, so history is build up.

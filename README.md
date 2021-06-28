@@ -12,4 +12,4 @@ This webscraper tracks items on pricerunner.dk. When the price of the item is lo
 1) Make multiple items trackable.
 2) Make multiple different settings work simultaneously.
 3) Make receiving and sending email account arbitrary to user.
-4) Eventually add more websites such as pricerunner to scrape
+4) Eventually add more websites similar to pricerunner to scrape
